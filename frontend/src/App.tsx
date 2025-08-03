@@ -17,15 +17,35 @@ function App() {
   const getPageTitle = () => {
     switch (activeMenu) {
       case 'Tasks':
-        return { title: 'Task Management', subtitle: 'View and manage your scheduled jobs', icon: 'icon-schedule' };
+        return { 
+          title: 'Mission Control', 
+          subtitle: 'Your central command center for managing all scheduled AI jobs. Monitor, edit, and control job execution.', 
+          icon: 'icon-schedule' 
+        };
       case 'Schedules':
-        return { title: 'Create New Job', subtitle: 'Schedule a new AI-powered task', icon: 'icon-add' };
+        return { 
+          title: 'Create New Job', 
+          subtitle: 'Schedule a new AI-powered job with custom prompts and flexible timing options.', 
+          icon: 'icon-add' 
+        };
       case 'Pending Jobs':
-        return { title: 'Pending Jobs', subtitle: 'Jobs waiting to be executed', icon: 'icon-clock' };
+        return { 
+          title: 'Pending Jobs', 
+          subtitle: 'Jobs that are scheduled to run in the future. Monitor upcoming executions.', 
+          icon: 'icon-clock' 
+        };
       case 'Past Jobs':
-        return { title: 'Execution History', subtitle: 'Timeline of completed job runs', icon: 'icon-history' };
+        return { 
+          title: 'Execution History', 
+          subtitle: 'Timeline and results of completed job runs. Review AI outputs and performance.', 
+          icon: 'icon-history' 
+        };
       default:
-        return { title: 'Dashboard', subtitle: 'AI Job Scheduler', icon: 'icon-lightning' };
+        return { 
+          title: 'AI Job Scheduler', 
+          subtitle: 'Automate your AI tasks with flexible scheduling', 
+          icon: 'icon-lightning' 
+        };
     }
   };
 
@@ -45,7 +65,11 @@ function App() {
         {(() => {
           switch (activeMenu) {
             case 'Tasks':
-              return <JobsList refreshTrigger={refreshTrigger} onJobsChange={handleDataChange} />;
+              return <JobsList 
+                refreshTrigger={refreshTrigger} 
+                onJobsChange={handleDataChange} 
+                onNavigateToCreate={() => setActiveMenu('Schedules')}
+              />;
             case 'Schedules':
               return <JobForm onJobCreated={handleDataChange} />;
             case 'Pending Jobs':
@@ -63,7 +87,11 @@ function App() {
             case 'Past Jobs':
               return <TimelineView refreshTrigger={refreshTrigger} />;
             default:
-              return <JobsList refreshTrigger={refreshTrigger} onJobsChange={handleDataChange} />;
+              return <JobsList 
+                refreshTrigger={refreshTrigger} 
+                onJobsChange={handleDataChange}
+                onNavigateToCreate={() => setActiveMenu('Schedules')}
+              />;
           }
         })()}
       </div>

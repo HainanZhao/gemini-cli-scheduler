@@ -8,8 +8,8 @@ interface SideNavProps {
 
 const SideNav: React.FC<SideNavProps> = ({ activeMenu, setActiveMenu }) => {
   const menuItems = [
-    { id: 'Tasks', label: 'Tasks', icon: 'icon-schedule', description: 'View all tasks' },
-    { id: 'Schedules', label: 'Create Job', icon: 'icon-add', description: 'Add new scheduled job' },
+    { id: 'Tasks', label: 'Mission Control', icon: 'icon-schedule', description: 'View and manage scheduled jobs' },
+    { id: 'Schedules', label: 'Create Job', icon: 'icon-add', description: 'Schedule a new AI job' },
     { id: 'Pending Jobs', label: 'Pending', icon: 'icon-clock', description: 'Jobs waiting to run' },
     { id: 'Past Jobs', label: 'History', icon: 'icon-history', description: 'Execution timeline' }
   ];

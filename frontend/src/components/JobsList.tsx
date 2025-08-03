@@ -14,9 +14,10 @@ interface Job {
 interface JobsListProps {
   refreshTrigger?: number;
   onJobsChange?: () => void;
+  onNavigateToCreate?: () => void;
 }
 
-const JobsList: React.FC<JobsListProps> = ({ refreshTrigger, onJobsChange }) => {
+const JobsList: React.FC<JobsListProps> = ({ refreshTrigger, onJobsChange, onNavigateToCreate }) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [error, setError] = useState('');
@@ -135,11 +136,14 @@ const JobsList: React.FC<JobsListProps> = ({ refreshTrigger, onJobsChange }) => 
         <div className="card fade-in">
           <div className="card-body text-center p-12">
             <div className="icon icon-schedule text-6xl mb-6 text-primary-300"></div>
-            <h3 className="text-2xl font-semibold mb-3 text-primary">No Jobs Yet</h3>
+            <h3 className="text-2xl font-semibold mb-3 text-primary">No Scheduled Jobs</h3>
             <p className="text-secondary mb-8 text-lg">
-              Create your first scheduled job to get started with AI automation.
+              You haven't created any scheduled AI jobs yet. Create your first job to start automating AI tasks with custom prompts and flexible scheduling.
             </p>
-            <button className="btn btn-primary btn-lg">
+            <button 
+              className="btn btn-primary btn-lg"
+              onClick={onNavigateToCreate}
+            >
               <span className="icon icon-add"></span>
               Create Your First Job
             </button>
@@ -163,7 +167,7 @@ const JobsList: React.FC<JobsListProps> = ({ refreshTrigger, onJobsChange }) => 
                   
                   <ScheduleSelector
                     value={editingJob.cron_schedule}
-                    onChange={(cron) => setEditingJob({...editingJob, cron_schedule: cron})}
+                    onChange={(cron: string) => setEditingJob({...editingJob, cron_schedule: cron})}
                   />
                   
                   <div className="form-group">
