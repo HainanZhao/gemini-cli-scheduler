@@ -5,6 +5,7 @@ const path = require('path');
 const jobsRouter = require('./routes/jobs');
 const jobRunsRouter = require('./routes/jobRuns');
 const testPromptRouter = require('./routes/testPrompt');
+const chatRouter = require('./routes/chat');
 const { scheduleJobs } = require('./scheduler');
 require('./database/setup');
 
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 app.use('/api/jobs', jobsRouter);
 app.use('/api/job-runs', jobRunsRouter);
 app.use('/api/test-prompt', testPromptRouter);
+app.use('/api/chat', chatRouter);
 
 // Serve static files from frontend build in production
 if (process.env.NODE_ENV === 'production') {

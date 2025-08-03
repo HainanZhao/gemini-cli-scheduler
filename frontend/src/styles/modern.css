@@ -60,6 +60,19 @@
   --primary-800: #1e40af;
   --primary-900: #1e3a8a;
 
+  /* Custom Chat UI Colors */
+  --color-background-light: var(--background-primary);
+  --color-border: var(--border-medium);
+  --color-white: #ffffff;
+  --color-primary-light: var(--primary-100);
+  --color-primary-dark: var(--primary-700);
+  --color-secondary-light: var(--gray-100);
+  --color-text-dark: var(--text-primary);
+  --color-gray-light: var(--gray-200);
+  --color-gray: var(--gray-400);
+  --color-danger: var(--error-600);
+  --color-primary-rgb: 59, 130, 246;
+
   /* Neutral Colors */
   --gray-50: #f9fafb;
   --gray-100: #f3f4f6;

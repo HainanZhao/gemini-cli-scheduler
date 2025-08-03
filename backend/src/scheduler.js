@@ -1,11 +1,10 @@
-
 const cron = require('node-cron');
-const { exec } = require('child_process');
 const db = require('./database/db');
+const { executeGeminiPrompt } = require('./services/geminiService');
 
 const scheduledJobs = new Map();
 
-function executeJob(job) {
+async function executeJob(job) {
   console.log(`Executing job: ${job.name} (ID: ${job.id})`);
   
   const startTime = new Date();
@@ -19,32 +18,25 @@ function executeJob(job) {
     return;
   }
 
-  exec(`gemini --prompt "${job.prompt}"`, { 
-    timeout: 600_000,
-    maxBuffer: 100 * 1024 * 1024 // 100MB buffer for large outputs
-  }, (error, stdout, stderr) => {
+  let status = 'success';
+  let output = '';
+
+  try {
+    output = await executeGeminiPrompt(job.prompt);
+    console.log(`Job ${job.name} (ID: ${job.id}) completed successfully`);
+  } catch (error) {
+    status = 'failure';
+    output = error.message;
+    console.error(`Job ${job.name} (ID: ${job.id}) failed:`, error.message);
+  } finally {
     const endTime = new Date();
-    let status = 'success';
-    let output = stdout;
-
-    if (error) {
-      status = 'failure';
-      output = `Error: ${error.message}`;
-      if (stderr) {
-        output += `\nStderr: ${stderr}`;
-      }
-      console.error(`Job ${job.name} (ID: ${job.id}) failed:`, error.message);
-    } else {
-      console.log(`Job ${job.name} (ID: ${job.id}) completed successfully`);
-    }
-
     try {
       db.prepare('UPDATE job_runs SET status = ?, output = ?, end_time = ? WHERE id = ?')
         .run(status, output, endTime.toISOString(), jobRunId);
     } catch (dbError) {
       console.error(`Failed to update job run record ${jobRunId}:`, dbError);
     }
-  });
+  }
 }
 
 function scheduleJob(job) {

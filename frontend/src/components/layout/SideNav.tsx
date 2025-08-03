@@ -11,7 +11,8 @@ const SideNav: React.FC<SideNavProps> = ({ activeMenu, setActiveMenu }) => {
     { id: 'Tasks', label: 'Mission Control', icon: 'icon-schedule', description: 'View and manage scheduled jobs' },
     { id: 'Schedules', label: 'Create Job', icon: 'icon-add', description: 'Schedule a new AI job' },
     { id: 'Pending Jobs', label: 'Pending', icon: 'icon-clock', description: 'Jobs waiting to run' },
-    { id: 'Past Jobs', label: 'History', icon: 'icon-history', description: 'Execution timeline' }
+    { id: 'Past Jobs', label: 'History', icon: 'icon-history', description: 'Execution timeline' },
+    { id: 'Chat', label: 'Chat', icon: 'icon-robot', description: 'Chat with Gemini' }
   ];
 
   return (

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import JobForm from './components/JobForm';
 import JobsList from './components/JobsList';
 import TimelineView from './components/TimelineView';
+import Chat from './components/Chat';
 import SideNav from './components/layout/SideNav';
 import './styles/modern.css';
 import './styles/Layout.css';
@@ -39,6 +40,12 @@ function App() {
           title: 'Execution History', 
           subtitle: 'Timeline and results of completed job runs. Review AI outputs and performance.', 
           icon: 'icon-history' 
+        };
+      case 'Chat':
+        return { 
+          title: 'Gemini Chat', 
+          subtitle: 'Interact with the Gemini CLI in a chat-like interface.', 
+          icon: 'icon-robot' 
         };
       default:
         return { 
@@ -86,6 +93,8 @@ function App() {
               );
             case 'Past Jobs':
               return <TimelineView refreshTrigger={refreshTrigger} />;
+            case 'Chat':
+              return <Chat />;
             default:
               return <JobsList 
                 refreshTrigger={refreshTrigger} 
