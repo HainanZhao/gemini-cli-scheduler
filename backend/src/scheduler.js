@@ -6,34 +6,80 @@ const db = require('./database/db');
 const scheduledJobs = new Map();
 
 function executeJob(job) {
+  console.log(`Executing job: ${job.name} (ID: ${job.id})`);
+  
   const startTime = new Date();
-  const jobRun = db.prepare('INSERT INTO job_runs (job_id, status, start_time) VALUES (?, ?, ?)').run(job.id, 'running', startTime.toISOString());
+  let jobRunId;
+  
+  try {
+    const jobRun = db.prepare('INSERT INTO job_runs (job_id, status, start_time) VALUES (?, ?, ?)').run(job.id, 'running', startTime.toISOString());
+    jobRunId = jobRun.lastInsertRowid;
+  } catch (error) {
+    console.error(`Failed to create job run record for job ${job.id}:`, error);
+    return;
+  }
 
-  exec(`gemini-cli --prompt "${job.prompt}"`, (error, stdout, stderr) => {
+  exec(`gemini --prompt "${job.prompt}"`, { 
+    timeout: 600_000,
+    maxBuffer: 100 * 1024 * 1024 // 100MB buffer for large outputs
+  }, (error, stdout, stderr) => {
     const endTime = new Date();
     let status = 'success';
     let output = stdout;
 
     if (error) {
       status = 'failure';
-      output = `${error.message}\n${stderr}`;
+      output = `Error: ${error.message}`;
+      if (stderr) {
+        output += `\nStderr: ${stderr}`;
+      }
+      console.error(`Job ${job.name} (ID: ${job.id}) failed:`, error.message);
+    } else {
+      console.log(`Job ${job.name} (ID: ${job.id}) completed successfully`);
     }
 
-    db.prepare('UPDATE job_runs SET status = ?, output = ?, end_time = ? WHERE id = ?').run(status, output, endTime.toISOString(), jobRun.lastInsertRowid);
+    try {
+      db.prepare('UPDATE job_runs SET status = ?, output = ?, end_time = ? WHERE id = ?')
+        .run(status, output, endTime.toISOString(), jobRunId);
+    } catch (dbError) {
+      console.error(`Failed to update job run record ${jobRunId}:`, dbError);
+    }
   });
 }
 
 function scheduleJob(job) {
+  console.log(`Scheduling job: ${job.name} (ID: ${job.id}) with schedule: ${job.cron_schedule}`);
+  
+  // Remove existing scheduled job if it exists
   if (scheduledJobs.has(job.id)) {
     scheduledJobs.get(job.id).destroy();
+    scheduledJobs.delete(job.id);
   }
   
   if (job.is_active) {
-    const task = cron.schedule(job.cron_schedule, () => executeJob(job), {
-      scheduled: false
-    });
-    task.start();
-    scheduledJobs.set(job.id, task);
+    try {
+      // Validate cron expression before scheduling
+      if (!cron.validate(job.cron_schedule)) {
+        console.error(`Invalid cron expression for job ${job.id}: ${job.cron_schedule}`);
+        return;
+      }
+      
+      const task = cron.schedule(job.cron_schedule, () => {
+        try {
+          executeJob(job);
+        } catch (error) {
+          console.error(`Error executing job ${job.id}:`, error);
+        }
+      }, {
+        scheduled: false
+      });
+      
+      task.start();
+      scheduledJobs.set(job.id, task);
+      console.log(`Job ${job.id} scheduled successfully`);
+    } catch (error) {
+      console.error(`Failed to schedule job ${job.id}:`, error);
+    }
   }
 }
 

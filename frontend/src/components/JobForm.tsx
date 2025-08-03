@@ -1,6 +1,8 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import ScheduleSelector from './ScheduleSelector';
+import PromptTester from './PromptTester';
 
 interface JobFormProps {
   onJobCreated?: () => void;
@@ -8,28 +10,19 @@ interface JobFormProps {
 
 const JobForm: React.FC<JobFormProps> = ({ onJobCreated }) => {
   const [name, setName] = useState('');
-  const [cronSchedule, setCronSchedule] = useState('');
+  const [cronSchedule, setCronSchedule] = useState('0 9 * * *'); // Default to daily at 9 AM
   const [prompt, setPrompt] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const validateCronSchedule = (cron: string): boolean => {
-    // Basic cron validation - should have 5 parts separated by spaces
-    const parts = cron.trim().split(/\s+/);
-    return parts.length === 5;
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     
     if (!name.trim() || !cronSchedule.trim() || !prompt.trim()) {
       setError('All fields are required');
-      return;
-    }
-    
-    if (!validateCronSchedule(cronSchedule)) {
-      setError('Invalid cron schedule format. Use 5 fields: minute hour day month weekday');
       return;
     }
     
@@ -42,15 +35,21 @@ const JobForm: React.FC<JobFormProps> = ({ onJobCreated }) => {
         prompt: prompt.trim(),
       });
       
-      // Reset form
-      setName('');
-      setCronSchedule('');
-      setPrompt('');
+      setSuccess('Job created successfully!');
       
-      // Notify parent component
-      if (onJobCreated) {
-        onJobCreated();
-      }
+      // Reset form after a short delay
+      setTimeout(() => {
+        setName('');
+        setCronSchedule('0 9 * * *');
+        setPrompt('');
+        setSuccess('');
+        
+        // Notify parent component
+        if (onJobCreated) {
+          onJobCreated();
+        }
+      }, 1500);
+      
     } catch (error: unknown) {
       const errorMessage = error instanceof Error 
         ? error.message 
@@ -62,59 +61,154 @@ const JobForm: React.FC<JobFormProps> = ({ onJobCreated }) => {
   };
 
   return (
-    <div style={{ margin: '20px', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-      <h2>Create New Job</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            placeholder="Job Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            style={{ width: '100%', padding: '8px', marginBottom: '5px' }}
-          />
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            placeholder="Cron Schedule (e.g., 0 0 * * *)"
-            value={cronSchedule}
-            onChange={(e) => setCronSchedule(e.target.value)}
-            style={{ width: '100%', padding: '8px', marginBottom: '5px' }}
-          />
-          <small style={{ color: '#666' }}>
-            Format: minute hour day month weekday (e.g., "0 9 * * 1-5" for weekdays at 9 AM)
-          </small>
-        </div>
-        <div style={{ marginBottom: '10px' }}>
-          <textarea
-            placeholder="Prompt for Gemini CLI"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            rows={4}
-            style={{ width: '100%', padding: '8px', marginBottom: '5px' }}
-          />
-        </div>
-        {error && (
-          <div style={{ color: 'red', marginBottom: '10px' }}>
-            {error}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
+      {/* Prompt Tester */}
+      <div className="lg:col-span-1">
+        <PromptTester />
+      </div>
+      
+      {/* Main Form */}
+      <div className="lg:col-span-2">
+        <div className="card slide-up">
+          <div className="card-header">
+            <div className="flex items-center gap-3">
+              <span className="icon icon-add icon-lg text-primary-500"></span>
+              <div>
+                <h2 className="card-title">Create New Scheduled Job</h2>
+                <p className="card-subtitle">Set up an AI task to run automatically</p>
+              </div>
+            </div>
           </div>
-        )}
-        <button 
-          type="submit" 
-          disabled={isSubmitting}
-          style={{ 
-            padding: '10px 20px', 
-            backgroundColor: '#007bff', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '4px',
-            cursor: isSubmitting ? 'not-allowed' : 'pointer'
-          }}
-        >
-          {isSubmitting ? 'Creating...' : 'Create Job'}
-        </button>
-      </form>
+          
+          <div className="card-body">
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label className="form-label required">
+                  <span className="icon icon-edit"></span>
+                  Job Name
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g., Daily News Summary"
+                  disabled={isSubmitting}
+                />
+                <div className="form-text">
+                  Choose a descriptive name to identify this job
+                </div>
+              </div>
+              
+              <ScheduleSelector 
+                value={cronSchedule}
+                onChange={setCronSchedule}
+                disabled={isSubmitting}
+              />
+              
+              <div className="form-group">
+                <label className="form-label required">
+                  <span className="icon icon-robot"></span>
+                  AI Prompt
+                </label>
+                <textarea
+                  className="form-control"
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  rows={6}
+                  placeholder="Describe the task for the AI to perform. Be specific about what you want the AI to do, analyze, or generate..."
+                  disabled={isSubmitting}
+                />
+                <div className="form-text">
+                  Write a clear, detailed prompt for the AI to follow
+                </div>
+              </div>
+              
+              {error && (
+                <div className="alert alert-error">
+                  <span className="icon icon-error"></span>
+                  <strong>Error:</strong> {error}
+                </div>
+              )}
+              
+              {success && (
+                <div className="alert alert-success">
+                  <span className="icon icon-success"></span>
+                  {success}
+                </div>
+              )}
+              
+              <div className="btn-group mt-2">
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting || !name.trim() || !prompt.trim()}
+                  className="btn btn-primary btn-lg"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="spinner"></div>
+                      Creating Job...
+                    </>
+                  ) : (
+                    <>
+                      <span className="icon icon-add"></span>
+                      Create Scheduled Job
+                    </>
+                  )}
+                </button>
+                
+                {(name || prompt) && (
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      setName('');
+                      setPrompt('');
+                      setCronSchedule('0 9 * * *');
+                      setError('');
+                      setSuccess('');
+                    }}
+                    className="btn btn-secondary"
+                    disabled={isSubmitting}
+                  >
+                    <span className="icon icon-refresh"></span>
+                    Clear Form
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
+        </div>
+        
+        {/* Info Card */}
+        <div className="card mt-6">
+          <div className="card-body">
+            <h4 className="font-semibold mb-4 flex items-center gap-2">
+              <span className="icon icon-info"></span>
+              How It Works
+            </h4>
+            <div className="grid gap-4 text-sm text-secondary">
+              <div className="flex items-start gap-3">
+                <span className="icon icon-robot text-lg"></span>
+                <div>
+                  <strong>AI Processing:</strong> Your prompt will be sent to Gemini AI at the scheduled time
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="icon icon-schedule text-lg"></span>
+                <div>
+                  <strong>Reliable Scheduling:</strong> Jobs run automatically using cron expressions
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="icon icon-history text-lg"></span>
+                <div>
+                  <strong>Execution History:</strong> View results and performance in the History tab
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

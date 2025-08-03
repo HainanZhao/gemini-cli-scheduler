@@ -1,16 +1,39 @@
 {
-  "name": "backend",
+  "name": "gemini-cli-scheduler-backend",
   "version": "1.0.0",
+  "description": "Professional backend API for Gemini CLI Scheduler - AI-powered task automation server",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon src/index.js --watch src --ext js",
+    "dev:debug": "nodemon --inspect src/index.js",
+    "prod": "NODE_ENV=production node src/index.js",
+    "setup": "node src/database/setup.js",
+    "clean": "rm -f scheduler.db && npm run setup",
+    "lint": "echo \"Linting will be added in future versions\"",
+    "test": "echo \"Tests will be added in future versions\" && exit 0",
+    "health": "curl -f http://localhost:3001/health || exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "ai",
+    "scheduler",
+    "gemini",
+    "automation",
+    "express",
+    "nodejs",
+    "cron",
+    "sqlite"
+  ],
+  "author": "Gemini CLI Scheduler Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HainanZhao/gemini-cli-scheduler.git"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
     "better-sqlite3": "^12.2.0",
     "cors": "^2.8.5",

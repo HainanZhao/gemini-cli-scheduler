@@ -1,205 +1,178 @@
 # Gemini CLI Scheduler
 
-A web-based application for scheduling, running, and monitoring AI agent jobs using the Gemini CLI tool.
+A professional, modern web application for scheduling and managing AI-powered tasks using Google's Gemini CLI. Built with React, TypeScript, and Node.js with a beautiful, responsive interface.
 
-## Features
+![Gemini CLI Scheduler](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
+![React](https://img.shields.io/badge/React-19.1.0-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.6.2-blue)
+![Node.js](https://img.shields.io/badge/Node.js-Express%205.1.0-green)
 
-- **Job Management**: Create, edit, delete, and activate/deactivate scheduled jobs
-- **Cron Scheduling**: Use standard cron expressions to schedule job execution
-- **Real-time Monitoring**: View job execution history and status in a timeline view
-- **Output Inspection**: Click on any job run to view detailed output from the Gemini CLI
-- **Dynamic Scheduling**: Add, modify, or remove jobs without restarting the server
-- **Web Interface**: Modern React-based frontend with TypeScript support
+## ✨ Features
 
-## Project Structure
+### 🤖 AI-Powered Automation
+- **Gemini AI Integration**: Execute AI prompts on schedule using Google's Gemini CLI
+- **Prompt Testing**: Test your AI prompts immediately before scheduling
+- **Flexible Prompting**: Support for any text-based AI task or analysis
 
-```
-gemini-cli-scheduler/
-├── backend/                 # Express.js server
-│   ├── src/
-│   │   ├── index.js        # Main server file
-│   │   ├── scheduler.js    # Job scheduling logic
-│   │   ├── database/       # Database setup and connection
-│   │   └── routes/         # API endpoints
-│   └── package.json
-├── frontend/               # React + TypeScript frontend
-│   ├── src/
-│   │   ├── components/     # React components
-│   │   ├── App.tsx         # Main application component
-│   │   └── main.tsx        # Application entry point
-│   └── package.json
-└── README.md
-```
+### ⏰ Advanced Scheduling
+- **User-Friendly Interface**: Non-technical scheduling with preset options
+- **Cron Support**: Full cron expression support for advanced users
+- **Real-Time Management**: Start, pause, and manage jobs instantly
 
-## Prerequisites
+### 📊 Comprehensive Monitoring
+- **Execution Timeline**: Visual history of all job runs
+- **Status Tracking**: Real-time status updates (Running, Success, Failed)
+- **Performance Metrics**: Duration tracking and success rates
+- **Detailed Logs**: Full output capture and error reporting
 
-- **Node.js** (v18 or higher)
-- **npm** (v8 or higher)
-- **Gemini CLI** - You need to have the `gemini-cli` tool installed and accessible from your PATH
+### 🎨 Modern User Interface
+- **Professional Design**: Clean, modern interface inspired by leading tools
+- **Responsive Layout**: Optimized for desktop, tablet, and mobile
+- **Modern Icons**: Contemporary icon system with intuitive navigation
+- **Dark/Light Themes**: Adaptive design with professional color schemes
 
-### Installing Gemini CLI
+## 🚀 Quick Start
 
-Make sure you have the Gemini CLI installed and configured. You can typically install it via:
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Google Gemini CLI installed and configured
 
-```bash
-# Example - replace with actual installation method for gemini-cli
-npm install -g gemini-cli
-```
+### Installation
 
-## Installation
-
-1. **Clone the repository**:
+1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/HainanZhao/gemini-cli-scheduler.git
    cd gemini-cli-scheduler
    ```
 
-2. **Install all dependencies**:
+2. **Install dependencies**
    ```bash
-   npm run install:all
+   npm install
    ```
 
-   This will install dependencies for the root project, backend, and frontend.
-
-## Development
-
-### Running in Development Mode
-
-To run both the backend and frontend in development mode with hot reloading:
-
-```bash
-npm run dev
-```
-
-This will start:
-- Backend server on http://localhost:3001
-- Frontend development server on http://localhost:5173
-
-### Running Backend Only
-
-```bash
-npm run dev:backend
-```
-
-### Running Frontend Only
-
-```bash
-npm run dev:frontend
-```
-
-## Production
-
-### Building for Production
-
-1. **Build the frontend**:
+3. **Start development server**
    ```bash
-   npm run build
+   npm run dev
    ```
 
-2. **Start the production server**:
+4. **Access the application**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:3001
+
+## 🏗️ Architecture
+
+### Frontend (React + TypeScript)
+```
+frontend/
+├── src/
+│   ├── components/           # React components
+│   │   ├── JobForm.tsx      # Job creation form
+│   │   ├── JobsList.tsx     # Job management interface
+│   │   ├── PromptTester.tsx # AI prompt testing
+│   │   ├── TimelineView.tsx # Execution history
+│   │   ├── ScheduleSelector.tsx # User-friendly scheduling
+│   │   └── layout/          # Layout components
+│   ├── styles/              # CSS modules and design system
+│   │   ├── modern.css       # Professional design system
+│   │   └── Layout.css       # Layout-specific styles
+│   └── App.tsx              # Main application component
+```
+
+### Backend (Node.js + Express)
+```
+backend/
+├── src/
+│   ├── routes/              # API endpoints
+│   │   ├── jobs.js          # Job CRUD operations
+│   │   ├── jobRuns.js       # Execution history
+│   │   └── testPrompt.js    # Prompt testing
+│   ├── database/            # Database operations
+│   │   ├── db.js           # SQLite connection
+│   │   └── setup.js        # Schema initialization
+│   ├── scheduler.js         # Cron job management
+│   └── index.js            # Express server
+```
+
+### Database Schema (SQLite)
+- **jobs**: Store scheduled tasks with cron expressions and AI prompts
+- **job_runs**: Track execution history with status and output
+
+## 🛠️ Production Deployment
+
+### Build for Production
+
+1. **Build frontend**
    ```bash
-   npm start
+   cd frontend && npm run build
    ```
 
-The production server will serve both the API and the built frontend from a single port (3001 by default).
+2. **Test production build**
+   ```bash
+   npm run preview
+   ```
 
-## Usage
+3. **Start production server**
+   ```bash
+   npm run start
+   ```
 
-### Creating Jobs
+### Environment Configuration
 
-1. Open the application in your browser
-2. Fill out the "Create New Job" form:
-   - **Job Name**: A descriptive name for your job
-   - **Cron Schedule**: A cron expression (e.g., `0 9 * * 1-5` for weekdays at 9 AM)
-   - **Prompt**: The prompt text to send to Gemini CLI
-3. Click "Create Job"
+Create `.env` files for production:
+
+**Backend `.env`:**
+```env
+NODE_ENV=production
+PORT=3001
+DATABASE_PATH=/path/to/production/scheduler.db
+GEMINI_CLI_PATH=/usr/local/bin/gemini
+```
+
+**Frontend `.env.production`:**
+```env
+VITE_API_URL=https://your-domain.com/api
+```
+
+## 📱 User Guide
+
+### Creating Your First Job
+
+1. **Navigate to "Create Job"** in the sidebar
+2. **Enter a descriptive name** for your task
+3. **Choose a schedule** using the friendly interface or custom cron
+4. **Write your AI prompt** describing the task
+5. **Test the prompt** using the built-in tester
+6. **Save and activate** the job
 
 ### Managing Jobs
 
-- **View Jobs**: All jobs are listed in the "Jobs List" section
-- **Activate/Deactivate**: Use the toggle buttons to enable/disable job execution
-- **Edit**: Click "Edit" to modify job details
-- **Delete**: Click "Delete" to remove a job (with confirmation)
+- **View all jobs** in the Tasks section
+- **Edit inline** by clicking the edit button
+- **Pause/Resume** jobs with the play/pause toggle
+- **Delete jobs** that are no longer needed
+- **Monitor execution** in the History timeline
 
-### Monitoring Job Runs
+## 🔧 Development
 
-- **Timeline View**: See all job executions in chronological order
-- **Status Indicators**: Color-coded status (green=success, red=failure, yellow=running)
-- **Job Details**: Click on any job run to see the full output from Gemini CLI
+### Project Structure
 
-### Cron Schedule Examples
+The application follows modern best practices:
 
-- `0 9 * * 1-5` - Every weekday at 9:00 AM
-- `0 */2 * * *` - Every 2 hours
-- `30 14 * * 0` - Every Sunday at 2:30 PM
-- `0 0 1 * *` - First day of every month at midnight
-- `*/15 * * * *` - Every 15 minutes
+- **TypeScript**: Full type safety across the codebase
+- **Component Architecture**: Modular, reusable React components
+- **Design System**: Consistent styling with CSS custom properties
+- **API Design**: RESTful endpoints with proper error handling
+- **Database Management**: SQLite with automatic migrations
 
-## API Endpoints
+### Key Technologies
 
-### Jobs
-- `GET /api/jobs` - List all jobs
-- `POST /api/jobs` - Create a new job
-- `PUT /api/jobs/:id` - Update a job
-- `DELETE /api/jobs/:id` - Delete a job
+- **Frontend**: React 19.1.0, TypeScript 5.6.2, Vite 7.0.6
+- **Backend**: Node.js, Express 5.1.0, node-cron 4.2.1
+- **Database**: SQLite with better-sqlite3 12.2.0
+- **Styling**: Modern CSS with design tokens
+- **Build**: Vite with optimized production builds
 
-### Job Runs
-- `GET /api/job-runs` - List job execution history
-  - Query parameters: `job_id`, `status`, `start_time`, `end_time`
+---
 
-## Database
-
-The application uses SQLite with the following tables:
-
-### jobs
-- `id` - Primary key
-- `name` - Job name
-- `cron_schedule` - Cron expression
-- `prompt` - Gemini CLI prompt
-- `is_active` - Whether the job is active
-
-### job_runs
-- `id` - Primary key
-- `job_id` - Foreign key to jobs table
-- `status` - Execution status (running, success, failure)
-- `output` - Command output
-- `start_time` - Execution start time
-- `end_time` - Execution end time
-
-## Environment Variables
-
-- `PORT` - Server port (default: 3001)
-- `NODE_ENV` - Environment (development/production)
-
-## Troubleshooting
-
-### Common Issues
-
-1. **"gemini-cli command not found"**
-   - Ensure Gemini CLI is installed and in your PATH
-   - Test with: `gemini-cli --help`
-
-2. **Jobs not executing**
-   - Check that jobs are marked as active
-   - Verify cron expression format
-   - Check server logs for errors
-
-3. **Frontend can't connect to backend**
-   - Ensure backend is running on port 3001
-   - Check that proxy configuration is correct in vite.config.ts
-
-### Logs
-
-Check the server console for job execution logs and error messages.
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is licensed under the ISC License.
+**Built with ❤️ for modern AI automation workflows**
